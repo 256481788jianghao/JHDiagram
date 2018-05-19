@@ -7,4 +7,29 @@ import BaseMainForm
 class MainForm( BaseMainForm.BaseMainForm ):
 	def __init__( self, parent ):
 		BaseMainForm.BaseMainForm.__init__( self, parent )
-	
+		
+		size = self.GetClientSize()
+		self.bitmap = wx.Bitmap(size.width, size.height)
+		self.pen = wx.Pen("green", 1, wx.SOLID)
+		self.brush = wx.Brush('', wx.TRANSPARENT)  #透明填充
+		
+		#For Log Message
+		self.LogTarget = wx.LogWindow(self,'LogFrame',True,False)
+		wx.Log.SetActiveTarget(self.LogTarget)
+
+
+	def onSelectMenuItemHelpShowLog( self, event ):
+		self.LogTarget.Show()
+		
+	def onMainPanelPaint( self, event ):
+		wx.LogMessage('MainPabek onPaint')
+		#dc = wx.BufferedPaintDC(self, self.bitmap)
+		
+	def onButtonLineClick( self, event ):
+		wx.LogMessage('draw Line')
+		dc = wx.BufferedDC(wx.ClientDC(self.m_panel_main), self.bitmap)
+		dc.SetPen(self.pen)
+		dc.SetBackground(wx.Brush(self.m_panel_main.GetBackgroundColour()))
+		dc.SetBrush(self.brush)
+		dc.DrawLine(0, 0, 300, 300)
+		#wx.BufferedPaintDC(self, self.bitmap)

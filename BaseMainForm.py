@@ -22,6 +22,12 @@ class BaseMainForm ( wx.Frame ):
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 		
 		self.m_menubar_mainform = wx.MenuBar( 0 )
+		self.m_menu_help = wx.Menu()
+		self.m_menuItem_help_show_log = wx.MenuItem( self.m_menu_help, wx.ID_ANY, u"Show Log", wx.EmptyString, wx.ITEM_NORMAL )
+		self.m_menu_help.Append( self.m_menuItem_help_show_log )
+		
+		self.m_menubar_mainform.Append( self.m_menu_help, u"help" ) 
+		
 		self.SetMenuBar( self.m_menubar_mainform )
 		
 		self.m_toolBar_mainform = self.CreateToolBar( wx.TB_HORIZONTAL, wx.ID_ANY ) 
@@ -61,6 +67,18 @@ class BaseMainForm ( wx.Frame ):
 		self.m_choicebook_box = wx.Choicebook( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.CHB_DEFAULT )
 		self.m_scrolledWindow_box_list = wx.ScrolledWindow( self.m_choicebook_box, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.HSCROLL|wx.VSCROLL )
 		self.m_scrolledWindow_box_list.SetScrollRate( 5, 5 )
+		gSizer_toolbox = wx.GridSizer( 0, 2, 0, 0 )
+		
+		self.m_button_Line = wx.Button( self.m_scrolledWindow_box_list, wx.ID_ANY, u"Line", wx.DefaultPosition, wx.DefaultSize, 0 )
+		gSizer_toolbox.Add( self.m_button_Line, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+		
+		self.m_button2 = wx.Button( self.m_scrolledWindow_box_list, wx.ID_ANY, u"MyButton", wx.DefaultPosition, wx.DefaultSize, 0 )
+		gSizer_toolbox.Add( self.m_button2, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
+		
+		
+		self.m_scrolledWindow_box_list.SetSizer( gSizer_toolbox )
+		self.m_scrolledWindow_box_list.Layout()
+		gSizer_toolbox.Fit( self.m_scrolledWindow_box_list )
 		self.m_choicebook_box.AddPage( self.m_scrolledWindow_box_list, u"base", False )
 		bSizer_b1_2.Add( self.m_choicebook_box, 1, wx.EXPAND |wx.ALL, 5 )
 		
@@ -72,8 +90,24 @@ class BaseMainForm ( wx.Frame ):
 		self.Layout()
 		
 		self.Centre( wx.BOTH )
+		
+		# Connect Events
+		self.Bind( wx.EVT_MENU, self.onSelectMenuItemHelpShowLog, id = self.m_menuItem_help_show_log.GetId() )
+		self.m_panel_main.Bind( wx.EVT_PAINT, self.onMainPanelPaint )
+		self.m_button_Line.Bind( wx.EVT_BUTTON, self.onButtonLineClick )
 	
 	def __del__( self ):
 		pass
+	
+	
+	# Virtual event handlers, overide them in your derived class
+	def onSelectMenuItemHelpShowLog( self, event ):
+		event.Skip()
+	
+	def onMainPanelPaint( self, event ):
+		event.Skip()
+	
+	def onButtonLineClick( self, event ):
+		event.Skip()
 	
 
