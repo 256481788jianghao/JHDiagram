@@ -2,20 +2,24 @@
 
 import wx
 import BaseMainForm
+from JHPaintObject import *
 
 # Implementing BaseMainForm
 class MainForm( BaseMainForm.BaseMainForm ):
 	def __init__( self, parent ):
 		BaseMainForm.BaseMainForm.__init__( self, parent )
 		
-		size = self.GetClientSize()
-		self.bitmap = wx.Bitmap(size.width, size.height)
+		
 		self.pen = wx.Pen("green", 1, wx.SOLID)
-		self.brush = wx.Brush('', wx.TRANSPARENT)  #透明填充
+		self.brush = wx.Brush('blue', wx.TRANSPARENT)  #透明填充
 		
 		#For Log Message
 		self.LogTarget = wx.LogWindow(self,'LogFrame',True,False)
 		wx.Log.SetActiveTarget(self.LogTarget)
+		
+		#paint object list
+		self.drawPaper = JHRect()
+		self.paintObjList = []
 
 
 	def onSelectMenuItemHelpShowLog( self, event ):
@@ -23,13 +27,24 @@ class MainForm( BaseMainForm.BaseMainForm ):
 		
 	def onMainPanelPaint( self, event ):
 		wx.LogMessage('MainPabek onPaint')
-		#dc = wx.BufferedPaintDC(self, self.bitmap)
 		
 	def onButtonLineClick( self, event ):
 		wx.LogMessage('draw Line')
+		self.paintObjList.append(JHLine(10,10,200,200))
+		self.__Draw()
+		
+	def __Draw( self ):
+		size = self.GetClientSize()
+		self.bitmap = wx.Bitmap(size.width, size.height)
 		dc = wx.BufferedDC(wx.ClientDC(self.m_panel_main), self.bitmap)
-		dc.SetPen(self.pen)
-		dc.SetBackground(wx.Brush(self.m_panel_main.GetBackgroundColour()))
-		dc.SetBrush(self.brush)
-		dc.DrawLine(0, 0, 300, 300)
-		#wx.BufferedPaintDC(self, self.bitmap)
+		gc = wx.GraphicsContext.Create(dc)
+		if gc:
+			paperSize = dc.GetSize()
+			wx.LogMessage('__Draw paper w='+str(paperSize.width)+' h='+str(paperSize.height))
+			self.drawPaper.width = paperSize.width
+			self.drawPaper.height = paperSize.height
+			self.drawPaper.Draw(gc)
+			for obj in self.paintObjList:
+				obj.Draw(gc)
+		else:
+			wx.LogMessage('__Draw gc create failed')
