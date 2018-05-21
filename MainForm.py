@@ -20,6 +20,7 @@ class MainForm( BaseMainForm.BaseMainForm ):
 		#paint object list
 		self.drawPaper = JHRect()
 		self.paintObjList = []
+		self.startDraggingObject = False
 
 
 	def onSelectMenuItemHelpShowLog( self, event ):
@@ -28,11 +29,42 @@ class MainForm( BaseMainForm.BaseMainForm ):
 	def onMainPanelPaint( self, event ):
 		wx.LogMessage('MainPabek onPaint')
 		
+	def onMainPanelLeftDown( self, event ):
+		self.startDraggingObject = True
+		pass
+	
+	def onMainPanelLeftUp( self, event ):
+		self.startDraggingObject = False
+		pass
+	
+	def onMainPanelMotion( self, event ):
+		position = event.GetPosition()
+		if not self.startDraggingObject:
+			
+			self.__PointOn(position)
+		else:
+			pass
+		
 	def onButtonLineClick( self, event ):
 		wx.LogMessage('draw Line')
 		self.paintObjList.append(JHLine(10,10,200,200))
 		self.__Draw()
 		
+	def __PointOn(self,position):
+		for obj in self.paintObjList:
+			if obj.PointOn(position,self.paintObjList):
+				self.__Draw()
+				break
+		else:
+			#FIXME:
+			hasTempObj = False
+			for obj in self.paintObjList:
+				if obj.isTempObj:
+					self.paintObjList.remove(obj)
+					hasTempObj = True
+			if hasTempObj:
+				self.__Draw()
+				
 	def __Draw( self ):
 		size = self.GetClientSize()
 		self.bitmap = wx.Bitmap(size.width, size.height)
@@ -40,9 +72,7 @@ class MainForm( BaseMainForm.BaseMainForm ):
 		gc = wx.GraphicsContext.Create(dc)
 		if gc:
 			paperSize = dc.GetSize()
-			wx.LogMessage('__Draw paper w='+str(paperSize.width)+' h='+str(paperSize.height))
-			self.drawPaper.width = paperSize.width
-			self.drawPaper.height = paperSize.height
+			self.drawPaper.ReSize(paperSize)
 			self.drawPaper.Draw(gc)
 			for obj in self.paintObjList:
 				obj.Draw(gc)

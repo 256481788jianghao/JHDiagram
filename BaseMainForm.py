@@ -93,6 +93,9 @@ class BaseMainForm ( wx.Frame ):
 		
 		# Connect Events
 		self.Bind( wx.EVT_MENU, self.onSelectMenuItemHelpShowLog, id = self.m_menuItem_help_show_log.GetId() )
+		self.m_panel_main.Bind( wx.EVT_LEFT_DOWN, self.onMainPanelLeftDown )
+		self.m_panel_main.Bind( wx.EVT_LEFT_UP, self.onMainPanelLeftUp )
+		self.m_panel_main.Bind( wx.EVT_MOTION, self.onMainPanelMotion )
 		self.m_panel_main.Bind( wx.EVT_PAINT, self.onMainPanelPaint )
 		self.m_button_Line.Bind( wx.EVT_BUTTON, self.onButtonLineClick )
 	
@@ -102,6 +105,15 @@ class BaseMainForm ( wx.Frame ):
 	
 	# Virtual event handlers, overide them in your derived class
 	def onSelectMenuItemHelpShowLog( self, event ):
+		event.Skip()
+	
+	def onMainPanelLeftDown( self, event ):
+		event.Skip()
+	
+	def onMainPanelLeftUp( self, event ):
+		event.Skip()
+	
+	def onMainPanelMotion( self, event ):
 		event.Skip()
 	
 	def onMainPanelPaint( self, event ):
