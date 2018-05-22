@@ -40,30 +40,23 @@ class MainForm( BaseMainForm.BaseMainForm ):
 	def onMainPanelMotion( self, event ):
 		position = event.GetPosition()
 		if not self.startDraggingObject:
-			
-			self.__PointOn(position)
+			self.__Focus(position)
 		else:
 			pass
 		
 	def onButtonLineClick( self, event ):
 		wx.LogMessage('draw Line')
 		self.paintObjList.append(JHLine(10,10,200,200))
+		self.paintObjList.append(JHLine(40,80,300,300))
 		self.__Draw()
 		
-	def __PointOn(self,position):
+	def __Focus(self,position):
+		needReDraw = False
 		for obj in self.paintObjList:
-			if obj.PointOn(position,self.paintObjList):
-				self.__Draw()
-				break
-		else:
-			#FIXME:
-			hasTempObj = False
-			for obj in self.paintObjList:
-				if obj.isTempObj:
-					self.paintObjList.remove(obj)
-					hasTempObj = True
-			if hasTempObj:
-				self.__Draw()
+			if JHFocusState.FOCUS_NONE != obj.Focus(position):
+				needReDraw = True
+		if needReDraw:
+			self.__Draw()
 				
 	def __Draw( self ):
 		size = self.GetClientSize()
