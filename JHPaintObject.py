@@ -2,6 +2,11 @@
 import wx
 import math
 
+class JHDragState:
+	DRAG_INIT = 0
+	DRAG_MOVING = 1
+	DRAG_SHAPEPOINT = 2
+
 class JHFocusState:
 	FOCUS_ON = 0
 	FOCUS_OFF = 1
@@ -13,19 +18,24 @@ class JHColour:
 	RED = wx.Colour(0xFF,0x00,0x00)
 
 class JHObject:
-	def __init__(self,Level = 0,Zoom = 1,BorderColour = JHColour.BLACK,BackgroundColour = JHColour.WHITE,IsTempObj = False):
+	def __init__(self,Level = 0,Zoom = 1):
 		self.level = Level #no use for now
 		self.zoom = Zoom
-		self.borderColour = BorderColour
-		self.backgroundColour = BackgroundColour
+		self.borderColour = JHColour.BLACK
+		self.backgroundColour = JHColour.WHITE
 		self.path = None
 		self.isFocus = False
+		self.dragState = JHDragState.DRAG_INIT
+		self.dragTPoint = None
 		
 	def Draw(self,gc):
 		pass
 		
 	def Focus(self,position):
 		return JHFocusState.FOCUS_NONE
+		
+	def Dragging(self,position):
+		pass
 	
 	def __def__(self):
 		pass
@@ -41,10 +51,16 @@ class JHPoint(JHObject):
 class JHReShapePoint(JHPoint):
 	def __init__(self,X=0,Y=0):
 		JHPoint.__init__(self,X,Y)
-		self.flagRect = JHRect(X - 2.5,Y - 2.5, 5, 5)
+		self.flagRect = JHRect(X - 4,Y - 4, 8, 8)
 		self.flagRect.borderColour = JHColour.RED
 		self.flagRect.backgroundColour = JHColour.RED
-	
+		
+	def Move(self,dx,dy):
+		self.point = self.point + wx.Size(dx,dy)
+		self.flagRect.Offset(dx,dy)
+	def Contains(self,point):
+		return self.flagRect.Contains(point)
+		
 	def Draw(self,gc):
 		self.flagRect.Draw(gc)
 		
@@ -57,6 +73,7 @@ class JHLine(JHObject):
 		self.startPoint = JHReShapePoint(X0,Y0)
 		self.endPoint = JHReShapePoint(X1,Y1)
 		self.width = Width
+		self.isDragStartPoint = False
 		
 	def Focus(self,position):
 		if not self.isFocus and self.Contains(position):
@@ -64,9 +81,41 @@ class JHLine(JHObject):
 			return JHFocusState.FOCUS_ON
 		elif self.isFocus and not self.Contains(position):
 			self.isFocus = False
+			self.dragState = JHDragState.DRAG_INIT
 			return JHFocusState.FOCUS_OFF
 		else:
 			return JHFocusState.FOCUS_NONE
+			
+	def Dragging(self,position):
+		if JHDragState.DRAG_INIT == self.dragState:
+			self.dragTPoint = position
+			if self.startPoint.Contains(position):
+				self.isDragStartPoint = True
+				self.dragState = JHDragState.DRAG_SHAPEPOINT
+				wx.LogMessage('drag start')
+			elif self.endPoint.Contains(position):
+				self.isDragStartPoint = False
+				self.dragState = JHDragState.DRAG_SHAPEPOINT
+				wx.LogMessage('drag end')
+			else:
+				self.dragState = JHDragState.DRAG_MOVING
+				wx.LogMessage('drag move')
+		elif JHDragState.DRAG_MOVING == self.dragState:
+			vector = position - self.dragTPoint
+			self.dragTPoint = position
+			dx = vector.x
+			dy = vector.y
+			self.startPoint.Move(dx,dy)
+			self.endPoint.Move(dx,dy)
+		else:
+			vector = position - self.dragTPoint
+			self.dragTPoint = position
+			dx = vector.x
+			dy = vector.y
+			if self.isDragStartPoint:
+				self.startPoint.Move(dx,dy)
+			else:
+				self.endPoint.Move(dx,dy)
 	
 	def Contains(self,point):
 		if self.DistanceToPoint(point) < 5 and self.path.GetBox().Contains(wx.Point2D(point)):
@@ -110,17 +159,22 @@ class JHLine(JHObject):
 class JHRect(JHObject):
 	def __init__(self,X = 0,Y = 0,Width = 100,Height = 100,Radius = 0):
 		JHObject.__init__(self)
-		self.startPoint = wx.Point(X,Y)
-		self.size = wx.Size(Width,Height)
-		self.rect = wx.Rect(self.startPoint,self.size)
+		startPoint = wx.Point(X,Y)
+		size = wx.Size(Width,Height)
+		self.rect = wx.Rect(startPoint,size)
 		self.radius = Radius
 		
 	def ReSize(self, Width, Height):
-		self.size = wx.Size(Width,Height)
-		self.rect = wx.Rect(self.startPoint,self.size)
+		size = wx.Size(Width,Height)
+		ReSize(size)
 	def ReSize(self, Size):
-		self.size = wx.Size(Size)
-		self.rect = wx.Rect(self.startPoint,self.size)
+		self.rect.SetSize(Size)
+		
+	def Offset(self,dx,dy):
+		self.rect.Offset(dx,dy)
+		
+	def Contains(self,point):
+		return self.rect.Contains(point)
 		
 	def Draw(self,gc):
 		pen = wx.Pen(colour = self.borderColour)

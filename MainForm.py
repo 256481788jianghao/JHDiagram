@@ -31,23 +31,28 @@ class MainForm( BaseMainForm.BaseMainForm ):
 		
 	def onMainPanelLeftDown( self, event ):
 		self.startDraggingObject = True
-		pass
 	
 	def onMainPanelLeftUp( self, event ):
 		self.startDraggingObject = False
-		pass
 	
 	def onMainPanelMotion( self, event ):
 		position = event.GetPosition()
 		if not self.startDraggingObject:
 			self.__Focus(position)
 		else:
-			pass
+			self.__Dragging(position)
 		
 	def onButtonLineClick( self, event ):
 		wx.LogMessage('draw Line')
 		self.paintObjList.append(JHLine(10,10,200,200))
 		self.paintObjList.append(JHLine(40,80,300,300))
+		self.__Draw()
+		
+	def __Dragging(self,position):
+		for obj in self.paintObjList:
+			if obj.isFocus:
+				obj.Dragging(position)
+				break
 		self.__Draw()
 		
 	def __Focus(self,position):
