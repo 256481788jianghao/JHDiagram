@@ -18,8 +18,9 @@ class MainForm( BaseMainForm.BaseMainForm ):
 		wx.Log.SetActiveTarget(self.LogTarget)
 		
 		#paint object list
-		self.drawPaper = JHRect()
+		drawPaper = JHRect()
 		self.paintObjList = []
+		self.paintObjList.append(drawPaper)
 		self.startDraggingObject = False
 
 
@@ -71,8 +72,7 @@ class MainForm( BaseMainForm.BaseMainForm ):
 		gc = wx.GraphicsContext.Create(dc)
 		if gc:
 			paperSize = dc.GetSize()
-			self.drawPaper.ReSize(paperSize)
-			self.drawPaper.Draw(gc)
+			self.paintObjList[0].ReSize(paperSize)
 			for obj in self.paintObjList:
 				obj.Draw(gc)
 		else:
