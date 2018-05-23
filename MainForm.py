@@ -27,7 +27,8 @@ class MainForm( BaseMainForm.BaseMainForm ):
 		self.LogTarget.Show()
 		
 	def onMainPanelPaint( self, event ):
-		wx.LogMessage('MainPabek onPaint')
+		wx.LogMessage('MainPabel onPaint')
+		self.__Draw()
 		
 	def onMainPanelLeftDown( self, event ):
 		self.startDraggingObject = True
