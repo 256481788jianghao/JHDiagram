@@ -22,6 +22,27 @@ class BaseMainForm ( wx.Frame ):
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 		
 		self.m_menubar_mainform = wx.MenuBar( 0 )
+		self.m_menu_file = wx.Menu()
+		self.m_menuItem_file_new = wx.MenuItem( self.m_menu_file, wx.ID_ANY, u"New", wx.EmptyString, wx.ITEM_NORMAL )
+		self.m_menu_file.Append( self.m_menuItem_file_new )
+		
+		self.m_menu_file.AppendSeparator()
+		
+		self.m_menuItem_file_open = wx.MenuItem( self.m_menu_file, wx.ID_ANY, u"Open", wx.EmptyString, wx.ITEM_NORMAL )
+		self.m_menu_file.Append( self.m_menuItem_file_open )
+		
+		self.m_menu_file.AppendSeparator()
+		
+		self.m_menuItem_file_save = wx.MenuItem( self.m_menu_file, wx.ID_ANY, u"Save", wx.EmptyString, wx.ITEM_NORMAL )
+		self.m_menu_file.Append( self.m_menuItem_file_save )
+		
+		self.m_menu_file.AppendSeparator()
+		
+		self.m_menuItem_file_saveImg = wx.MenuItem( self.m_menu_file, wx.ID_ANY, u"SaveImage", wx.EmptyString, wx.ITEM_NORMAL )
+		self.m_menu_file.Append( self.m_menuItem_file_saveImg )
+		
+		self.m_menubar_mainform.Append( self.m_menu_file, u"File" ) 
+		
 		self.m_menu_help = wx.Menu()
 		self.m_menuItem_help_show_log = wx.MenuItem( self.m_menu_help, wx.ID_ANY, u"Show Log", wx.EmptyString, wx.ITEM_NORMAL )
 		self.m_menu_help.Append( self.m_menuItem_help_show_log )
