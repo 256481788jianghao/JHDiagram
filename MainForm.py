@@ -29,10 +29,25 @@ class MainForm( BaseMainForm.BaseMainForm ):
 		
 		#file info
 		self.fileName = None
+		self.isHotKeySavingFile = False
 
 
 	def onSelectMenuItemHelpShowLog( self, event ):
 		self.LogTarget.Show()
+		
+	def onMainPanelChar( self, event ):
+		wx.LogMessage('onChar')
+	
+	def onMainPanelKeyDown( self, event ):
+		if not self.isHotKeySavingFile:
+			if event.ControlDown() and event.GetKeyCode() == 83:#CTRL+S
+				self.isHotKeySavingFile = True
+				self.onSelectMenuItemFileSave(wx.MouseEvent())
+	
+	def onMainPanelKeyUp( self, event ):
+		if self.isHotKeySavingFile:
+			if event.GetKeyCode() == 83 or event.GetKeyCode() == wx.WXK_CONTROL:
+				self.isHotKeySavingFile = False
 		
 	def onSelectMenuItemFileNew( self, event ):
 		self.paintObjList.clear()

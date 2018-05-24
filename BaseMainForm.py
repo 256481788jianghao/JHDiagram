@@ -113,10 +113,16 @@ class BaseMainForm ( wx.Frame ):
 		self.Centre( wx.BOTH )
 		
 		# Connect Events
+		self.Bind( wx.EVT_CHAR, self.onMainFormChar )
+		self.Bind( wx.EVT_KEY_DOWN, self.onMainFormKeyDown )
+		self.Bind( wx.EVT_KEY_UP, self.onMainFormKeyUp )
 		self.Bind( wx.EVT_MENU, self.onSelectMenuItemFileNew, id = self.m_menuItem_file_new.GetId() )
 		self.Bind( wx.EVT_MENU, self.onSelectMenuItemFileOpen, id = self.m_menuItem_file_open.GetId() )
 		self.Bind( wx.EVT_MENU, self.onSelectMenuItemFileSave, id = self.m_menuItem_file_save.GetId() )
 		self.Bind( wx.EVT_MENU, self.onSelectMenuItemHelpShowLog, id = self.m_menuItem_help_show_log.GetId() )
+		self.m_panel_main.Bind( wx.EVT_CHAR, self.onMainPanelChar )
+		self.m_panel_main.Bind( wx.EVT_KEY_DOWN, self.onMainPanelKeyDown )
+		self.m_panel_main.Bind( wx.EVT_KEY_UP, self.onMainPanelKeyUp )
 		self.m_panel_main.Bind( wx.EVT_LEFT_DOWN, self.onMainPanelLeftDown )
 		self.m_panel_main.Bind( wx.EVT_LEFT_UP, self.onMainPanelLeftUp )
 		self.m_panel_main.Bind( wx.EVT_MOTION, self.onMainPanelMotion )
@@ -128,6 +134,15 @@ class BaseMainForm ( wx.Frame ):
 	
 	
 	# Virtual event handlers, overide them in your derived class
+	def onMainFormChar( self, event ):
+		event.Skip()
+	
+	def onMainFormKeyDown( self, event ):
+		event.Skip()
+	
+	def onMainFormKeyUp( self, event ):
+		event.Skip()
+	
 	def onSelectMenuItemFileNew( self, event ):
 		event.Skip()
 	
@@ -138,6 +153,15 @@ class BaseMainForm ( wx.Frame ):
 		event.Skip()
 	
 	def onSelectMenuItemHelpShowLog( self, event ):
+		event.Skip()
+	
+	def onMainPanelChar( self, event ):
+		event.Skip()
+	
+	def onMainPanelKeyDown( self, event ):
+		event.Skip()
+	
+	def onMainPanelKeyUp( self, event ):
 		event.Skip()
 	
 	def onMainPanelLeftDown( self, event ):
