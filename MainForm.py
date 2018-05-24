@@ -79,6 +79,16 @@ class MainForm( BaseMainForm.BaseMainForm ):
 				self.fileName = fileDialog.GetPath()+'.jhd'
 				self.__saveFile()
 	
+	def onSelectMenuItemFileSaveImg( self, event ):
+		fileDialog = wx.FileDialog(self,pos=wx.Point(100,100),style=wx.FD_SAVE)
+		if wx.ID_OK == fileDialog.ShowModal():
+			try:
+				fileName = fileDialog.GetPath()+".bmp";
+				saveImg = self.bitmap.ConvertToImage()
+				saveImg.SaveFile(fileName,wx.BITMAP_TYPE_BMP)
+			except Exception as e:
+				wx.LogMessage(e.toString())
+	
 	def __saveFile(self):
 		try:
 			fileHandle = open(self.fileName,'wb')
@@ -130,13 +140,12 @@ class MainForm( BaseMainForm.BaseMainForm ):
 			self.__Draw()
 				
 	def __Draw( self ):
-		size = self.GetClientSize()
+		size = self.m_panel_main.GetClientSize()
 		self.bitmap = wx.Bitmap(size.width, size.height)
 		dc = wx.BufferedDC(wx.ClientDC(self.m_panel_main), self.bitmap)
 		gc = wx.GraphicsContext.Create(dc)
 		if gc:
-			paperSize = dc.GetSize()
-			self.paintObjList[0].ReSize(paperSize)
+			self.paintObjList[0].ReSize(size)
 			for obj in self.paintObjList:
 				obj.Draw(gc)
 		else:

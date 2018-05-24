@@ -119,6 +119,7 @@ class BaseMainForm ( wx.Frame ):
 		self.Bind( wx.EVT_MENU, self.onSelectMenuItemFileNew, id = self.m_menuItem_file_new.GetId() )
 		self.Bind( wx.EVT_MENU, self.onSelectMenuItemFileOpen, id = self.m_menuItem_file_open.GetId() )
 		self.Bind( wx.EVT_MENU, self.onSelectMenuItemFileSave, id = self.m_menuItem_file_save.GetId() )
+		self.Bind( wx.EVT_MENU, self.onSelectMenuItemFileSaveImg, id = self.m_menuItem_file_saveImg.GetId() )
 		self.Bind( wx.EVT_MENU, self.onSelectMenuItemHelpShowLog, id = self.m_menuItem_help_show_log.GetId() )
 		self.m_panel_main.Bind( wx.EVT_CHAR, self.onMainPanelChar )
 		self.m_panel_main.Bind( wx.EVT_KEY_DOWN, self.onMainPanelKeyDown )
@@ -150,6 +151,9 @@ class BaseMainForm ( wx.Frame ):
 		event.Skip()
 	
 	def onSelectMenuItemFileSave( self, event ):
+		event.Skip()
+	
+	def onSelectMenuItemFileSaveImg( self, event ):
 		event.Skip()
 	
 	def onSelectMenuItemHelpShowLog( self, event ):
