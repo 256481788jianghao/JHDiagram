@@ -4,6 +4,7 @@ import wx
 import BaseMainForm
 import pickle
 from JHPaintObject import *
+from JHPaintObjectList import *
 
 
 # Implementing BaseMainForm
@@ -21,7 +22,7 @@ class MainForm( BaseMainForm.BaseMainForm ):
 		
 		#paint object list
 		drawPaper = JHRect()
-		self.paintObjList = []
+		self.paintObjList = JHPaintObjectList()
 		self.paintObjList.append(drawPaper)
 		
 		#drag flag
