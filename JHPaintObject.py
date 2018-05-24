@@ -50,6 +50,9 @@ class JHPoint(JHObject):
 	def __init__(self,X = 0,Y = 0):
 		JHObject.__init__(self)
 		self.point = wx.Point(X,Y)
+		
+	def ReSet(self,Point):
+		self.point = Point
 	
 	def __def__(self):
 		pass
@@ -65,6 +68,7 @@ class JHReShapePoint(JHPoint):
 	def Move(self,dx,dy):
 		self.point = self.point + wx.Size(dx,dy)
 		self.flagRect.Offset(dx,dy)
+		
 	def Contains(self,point):
 		return self.flagRect.Contains(point)
 		
@@ -79,9 +83,11 @@ class JHLine(JHObject):
 		JHObject.__init__(self)
 		self.startPoint = JHReShapePoint(X0,Y0)
 		self.endPoint = JHReShapePoint(X1,Y1)
+		self.midPoint = JHReShapePoint((X0+X1)/2,(Y0+Y1)/2)
 		self.width = Width
 		self.isDragStartPoint = False
 		self.children.append(self.startPoint)
+		self.children.append(self.midPoint)
 		self.children.append(self.endPoint)
 		
 	def Focus(self,position):
@@ -116,6 +122,7 @@ class JHLine(JHObject):
 			dy = vector.y
 			self.startPoint.Move(dx,dy)
 			self.endPoint.Move(dx,dy)
+			self.midPoint.Move(dx,dy)
 		else:
 			vector = position - self.dragTPoint
 			self.dragTPoint = position
@@ -125,6 +132,9 @@ class JHLine(JHObject):
 				self.startPoint.Move(dx,dy)
 			else:
 				self.endPoint.Move(dx,dy)
+			tPoint = (self.startPoint.point + self.endPoint.point)/2
+			diff = tPoint - self.midPoint.point
+			self.midPoint.Move(diff.x,diff.y)
 	
 	def Contains(self,point):
 		if self.DistanceToPoint(point) < 5 and self.path.GetBox().Contains(wx.Point2D(point)):
@@ -161,6 +171,7 @@ class JHLine(JHObject):
 		if self.isFocus:
 			self.startPoint.Draw(gc)
 			self.endPoint.Draw(gc)
+			self.midPoint.Draw(gc)
 		
 	def __def__(self):
 		pass
