@@ -113,6 +113,8 @@ class BaseMainForm ( wx.Frame ):
 		self.Centre( wx.BOTH )
 		
 		# Connect Events
+		self.Bind( wx.EVT_MENU, self.onSelectMenuItemFileOpen, id = self.m_menuItem_file_open.GetId() )
+		self.Bind( wx.EVT_MENU, self.onSelectMenuItemFileSave, id = self.m_menuItem_file_save.GetId() )
 		self.Bind( wx.EVT_MENU, self.onSelectMenuItemHelpShowLog, id = self.m_menuItem_help_show_log.GetId() )
 		self.m_panel_main.Bind( wx.EVT_LEFT_DOWN, self.onMainPanelLeftDown )
 		self.m_panel_main.Bind( wx.EVT_LEFT_UP, self.onMainPanelLeftUp )
@@ -125,6 +127,12 @@ class BaseMainForm ( wx.Frame ):
 	
 	
 	# Virtual event handlers, overide them in your derived class
+	def onSelectMenuItemFileOpen( self, event ):
+		event.Skip()
+	
+	def onSelectMenuItemFileSave( self, event ):
+		event.Skip()
+	
 	def onSelectMenuItemHelpShowLog( self, event ):
 		event.Skip()
 	

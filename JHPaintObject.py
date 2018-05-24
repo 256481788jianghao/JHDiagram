@@ -27,6 +27,7 @@ class JHObject:
 		self.isFocus = False
 		self.dragState = JHDragState.DRAG_INIT
 		self.dragTPoint = None
+		self.children = []
 		
 	def Draw(self,gc):
 		pass
@@ -36,6 +37,11 @@ class JHObject:
 		
 	def Dragging(self,position):
 		pass
+		
+	def PerpareSave(self):
+		self.path = None
+		for obj in self.children:
+			obj.PerpareSave()
 	
 	def __def__(self):
 		pass
@@ -54,6 +60,7 @@ class JHReShapePoint(JHPoint):
 		self.flagRect = JHRect(X - 4,Y - 4, 8, 8)
 		self.flagRect.borderColour = JHColour.RED
 		self.flagRect.backgroundColour = JHColour.RED
+		self.children.append(self.flagRect)
 		
 	def Move(self,dx,dy):
 		self.point = self.point + wx.Size(dx,dy)
@@ -74,6 +81,8 @@ class JHLine(JHObject):
 		self.endPoint = JHReShapePoint(X1,Y1)
 		self.width = Width
 		self.isDragStartPoint = False
+		self.children.append(self.startPoint)
+		self.children.append(self.endPoint)
 		
 	def Focus(self,position):
 		if not self.isFocus and self.Contains(position):
@@ -181,10 +190,10 @@ class JHRect(JHObject):
 		brush = wx.Brush(colour = self.backgroundColour)
 		gc.SetPen(pen)
 		gc.SetBrush(brush)
-		path = gc.CreatePath()
-		path.AddRoundedRectangle(self.rect.X,self.rect.Y,self.rect.Width,self.rect.Height,self.radius)
-		gc.StrokePath(path)
-		gc.FillPath(path)
+		self.path = gc.CreatePath()
+		self.path.AddRoundedRectangle(self.rect.X,self.rect.Y,self.rect.Width,self.rect.Height,self.radius)
+		gc.StrokePath(self.path)
+		gc.FillPath(self.path)
 		
 	
 	def __def__(self):

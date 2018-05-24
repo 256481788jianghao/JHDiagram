@@ -2,7 +2,9 @@
 
 import wx
 import BaseMainForm
+import pickle
 from JHPaintObject import *
+
 
 # Implementing BaseMainForm
 class MainForm( BaseMainForm.BaseMainForm ):
@@ -22,10 +24,50 @@ class MainForm( BaseMainForm.BaseMainForm ):
 		self.paintObjList = []
 		self.paintObjList.append(drawPaper)
 		self.startDraggingObject = False
+		
+		#file info
+		self.filePath = None
+		self.fileName = None
 
 
 	def onSelectMenuItemHelpShowLog( self, event ):
 		self.LogTarget.Show()
+	
+	def onSelectMenuItemFileOpen( self, event ):
+		fileDialog = wx.FileDialog(self,pos=wx.Point(100,100))
+		if wx.ID_OK == fileDialog.ShowModal():
+			self.fileName = fileDialog.GetPath()
+			try:
+				fileHandle = open(self.fileName,'rb')
+				openList = pickle.load(fileHandle)
+				self.paintObjList.clear()
+				self.paintObjList.extend(openList)
+				fileHandle.close()
+				self.__Draw()
+			except Exception as e:
+				wx.LogMessage(type(e))
+				wx.LogMessage('open file err')
+	
+	def onSelectMenuItemFileSave( self, event ):
+		if self.fileName != None:
+			self.__saveFile()
+		else:
+			fileDialog = wx.FileDialog(self,pos=wx.Point(100,100),style=wx.FD_SAVE)
+			if wx.ID_OK == fileDialog.ShowModal():
+				self.fileName = fileDialog.GetPath()+'.jhd'
+				self.__saveFile()
+	
+	def __saveFile(self):
+		try:
+			fileHandle = open(self.fileName,'wb')
+			#FIXME:pickle can pick wx.GraphicsPath, so I remove them then add them 
+			for obj in self.paintObjList:
+				obj.PerpareSave()
+			pickle.dump(self.paintObjList,fileHandle)
+			fileHandle.close()
+			self.__Draw()
+		except Exception as err:
+			wx.LogMessage('save file err')
 		
 	def onMainPanelPaint( self, event ):
 		wx.LogMessage('MainPabel onPaint')

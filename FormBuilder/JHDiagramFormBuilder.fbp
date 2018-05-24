@@ -168,7 +168,7 @@
                         <property name="permission">none</property>
                         <property name="shortcut"></property>
                         <property name="unchecked_bitmap"></property>
-                        <event name="OnMenuSelection"></event>
+                        <event name="OnMenuSelection">onSelectMenuItemFileOpen</event>
                         <event name="OnUpdateUI"></event>
                     </object>
                     <object class="separator" expanded="1">
@@ -187,7 +187,7 @@
                         <property name="permission">none</property>
                         <property name="shortcut"></property>
                         <property name="unchecked_bitmap"></property>
-                        <event name="OnMenuSelection"></event>
+                        <event name="OnMenuSelection">onSelectMenuItemFileSave</event>
                         <event name="OnUpdateUI"></event>
                     </object>
                     <object class="separator" expanded="1">
