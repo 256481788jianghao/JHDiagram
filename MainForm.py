@@ -23,15 +23,22 @@ class MainForm( BaseMainForm.BaseMainForm ):
 		drawPaper = JHRect()
 		self.paintObjList = []
 		self.paintObjList.append(drawPaper)
+		
+		#drag flag
 		self.startDraggingObject = False
 		
 		#file info
-		self.filePath = None
 		self.fileName = None
 
 
 	def onSelectMenuItemHelpShowLog( self, event ):
 		self.LogTarget.Show()
+		
+	def onSelectMenuItemFileNew( self, event ):
+		self.paintObjList.clear()
+		self.paintObjList.append(JHRect())
+		self.__Draw()
+		self.fileName = None
 	
 	def onSelectMenuItemFileOpen( self, event ):
 		fileDialog = wx.FileDialog(self,pos=wx.Point(100,100))
