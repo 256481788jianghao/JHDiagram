@@ -31,6 +31,11 @@ class MainForm( BaseMainForm.BaseMainForm ):
 		#file info
 		self.fileName = None
 		self.isHotKeySavingFile = False
+		
+		#select
+		self.startSelectObjs = False
+		self.selectRect = JHRect(0,0,0,0)
+		self.paintObjList.append(self.selectRect)
 
 
 	def onSelectMenuItemHelpShowLog( self, event ):
@@ -107,15 +112,36 @@ class MainForm( BaseMainForm.BaseMainForm ):
 		self.__Draw()
 		
 	def onMainPanelLeftDown( self, event ):
-		self.startDraggingObject = True
+		position = event.GetPosition()
+		self.startDraggingObject = False
+		for obj in self.paintObjList:
+			if obj.Contains(position) and obj.isFocus:
+				self.startDraggingObject = True
+				break
+		else:
+			self.startSelectObjs = True
+			self.selectRect.SetTopLeft(position)
 	
 	def onMainPanelLeftUp( self, event ):
+		position = event.GetPosition()
 		self.startDraggingObject = False
+		if self.startSelectObjs:
+			self.startSelectObjs = False
+			#print(self.selectRect.GetSize())
+			for obj in self.paintObjList:
+				obj.Select(self.selectRect)
+				obj.Focus(position)
+			self.selectRect.ReSize(wx.Size(0,0))
+			self.__Draw()
 	
 	def onMainPanelMotion( self, event ):
 		position = event.GetPosition()
+		if self.startSelectObjs:
+			self.selectRect.SetBottomRight(position)
+			self.__Draw()
+
 		if not self.startDraggingObject:
-			self.__Focus(position)
+			pass
 		else:
 			self.__Dragging(position)
 		
@@ -129,7 +155,6 @@ class MainForm( BaseMainForm.BaseMainForm ):
 		for obj in self.paintObjList:
 			if obj.isFocus:
 				obj.Dragging(position)
-				break
 		self.__Draw()
 		
 	def __Focus(self,position):

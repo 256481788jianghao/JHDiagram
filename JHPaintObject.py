@@ -25,6 +25,7 @@ class JHObject:
 		self.backgroundColour = JHColour.WHITE
 		self.path = None
 		self.isFocus = False
+		self.isSelected = False
 		self.dragState = JHDragState.DRAG_INIT
 		self.dragTPoint = None
 		self.children = []
@@ -35,8 +36,14 @@ class JHObject:
 	def Focus(self,position):
 		return JHFocusState.FOCUS_NONE
 		
+	def Select(self,area):
+		return self.isSelected
+		
 	def Dragging(self,position):
 		pass
+		
+	def Contains(self,point):
+		return False
 		
 	def PerpareSave(self):
 		self.path = None
@@ -91,15 +98,23 @@ class JHLine(JHObject):
 		self.children.append(self.endPoint)
 		
 	def Focus(self,position):
-		if not self.isFocus and self.Contains(position):
+		if self.isSelected:
 			self.isFocus = True
-			return JHFocusState.FOCUS_ON
-		elif self.isFocus and not self.Contains(position):
-			self.isFocus = False
-			self.dragState = JHDragState.DRAG_INIT
-			return JHFocusState.FOCUS_OFF
 		else:
-			return JHFocusState.FOCUS_NONE
+			self.isFocus = False
+	
+	def Select(self,rect):
+		pos = rect.GetPosition()
+		if rect.IsEmpty():
+			rect.ReSize(wx.Size(2,2))
+		size = rect.GetSize()
+		centerPos = pos + rect.GetSize()/2
+		dis = self.DistanceToPoint(centerPos)
+		disP = wx.Point2D(pos).GetDistance(wx.Point2D(centerPos))
+		if disP > dis:
+			self.isSelected = True
+		else:
+			self.isSelected = False
 			
 	def Dragging(self,position):
 		if JHDragState.DRAG_INIT == self.dragState:
@@ -184,14 +199,30 @@ class JHRect(JHObject):
 		self.rect = wx.Rect(startPoint,size)
 		self.radius = Radius
 		
-	def ReSize(self, Width, Height):
-		size = wx.Size(Width,Height)
-		ReSize(size)
 	def ReSize(self, Size):
 		self.rect.SetSize(Size)
 		
 	def Offset(self,dx,dy):
 		self.rect.Offset(dx,dy)
+		
+	def SetPosition(self, pos):
+		self.rect.SetPosition(pos)
+		
+	def SetTopLeft(self, p):
+		self.rect.SetTopLeft(p)
+		
+	def SetBottomRight(self,p):
+		self.rect.SetBottomRight(p)
+		
+	def GetPosition(self):
+		return self.rect.GetPosition()
+		
+	def GetSize(self):
+		return self.rect.GetSize()
+		
+	def IsEmpty(self):
+		return self.rect.IsEmpty()
+	
 		
 	def Contains(self,point):
 		return self.rect.Contains(point)
