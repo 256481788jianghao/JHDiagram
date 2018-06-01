@@ -117,8 +117,9 @@ class MainForm( BaseMainForm.BaseMainForm ):
 		for obj in self.paintObjList:
 			if obj.Contains(position) and obj.isFocus:
 				self.startDraggingObject = True
-				break
-		else:
+			if self.startDraggingObject and obj.isFocus:
+				obj.dragState = JHDragState.DRAG_INIT
+		if not self.startDraggingObject:
 			self.startSelectObjs = True
 			self.selectRect.SetTopLeft(position)
 	
